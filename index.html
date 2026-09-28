@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Minimal developer-style placeholder site with a dark, elegant theme."
+    />
+    <title>SES — Minimal Dev Placeholder</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <header class="topbar">
+      <div class="brand-wrap">
+        <span class="brand-mark">S</span>
+        <div class="brand-text">
+          <span class="brand-name">SES</span>
+          <span class="brand-tag">/ dev workspace</span>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Main navigation">
+        <a href="#home">home</a>
+        <a href="#work">work</a>
+        <a href="#notes">notes</a>
+        <a href="#contact">contact</a>
+      </nav>
+    </header>
+
+    <main id="home" class="page-shell">
+      <section class="hero panel">
+        <div class="hero-copy">
+          <p class="eyebrow">// startup placeholder</p>
+          <h1>Build sharp ideas into calm digital products.</h1>
+          <p class="lead">
+            Minimal by design. Thoughtful by default. This is a clean placeholder for a
+            developer-focused portfolio, studio, or product landing page.
+          </p>
+
+          <div class="cta-row">
+            <a class="button primary" href="#work">View work</a>
+            <a class="button secondary" href="placeholder.html">Open placeholder</a>
+          </div>
+        </div>
+
+        <div class="hero-meta" aria-label="Project status panel">
+          <div class="status-row">
+            <span class="status-dot"></span>
+            <span>status: live draft</span>
+          </div>
+
+          <div class="meta-card">
+            <p class="meta-label">focus</p>
+            <p class="meta-value">product strategy</p>
+          </div>
+
+          <div class="meta-card">
+            <p class="meta-label">stack</p>
+            <p class="meta-value">html / css / js</p>
+          </div>
+
+          <div class="meta-card">
+            <p class="meta-label">location</p>
+            <p class="meta-value">remote · global</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="work" class="stats-grid">
+        <article class="panel stat-card">
+          <span class="stat-kicker">01</span>
+          <h3>Design systems</h3>
+          <p>Clean interface language and reusable building blocks.</p>
+        </article>
+
+        <article class="panel stat-card">
+          <span class="stat-kicker">02</span>
+          <h3>Brand direction</h3>
+          <p>Simple narratives, sharper positioning, stronger presence.</p>
+        </article>
+
+        <article class="panel stat-card">
+          <span class="stat-kicker">03</span>
+          <h3>Product thinking</h3>
+          <p>Ideas shaped into useful experience and focused execution.</p>
+        </article>
+      </section>
+
+      <section id="notes" class="content-grid">
+        <div class="panel feature-panel">
+          <p class="section-label">/ notes</p>
+          <h2>Minimal does not mean empty. It means intentional.</h2>
+          <p>
+            Every visual decision here is designed to feel quiet, confident, and easy to
+            navigate. Use this as a base for a portfolio, studio, or product launch page.
+          </p>
+        </div>
+
+        <div class="panel mini-panel">
+          <p class="section-label">/ snippet</p>
+          <pre><code>const focus = "clarity";
+const mood = "calm";
+const output = "useful work";</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contact" class="site-footer">
+      <div>
+        <span class="footer-label">// contact</span>
+        <a href="mailto:hello@example.com">hello@example.com</a>
+      </div>
+      <span>© <span id="year">2026</span> SES</span>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
