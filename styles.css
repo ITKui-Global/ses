@@ -309,10 +309,31 @@ a {
   max-width: 16ch;
 }
 
-.feature-panel p:last-child,
+.feature-panel > p:not(.section-label),
 .mini-panel p {
   margin-top: 0.9rem;
   color: var(--muted);
+}
+
+.note-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.4rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--border);
+  color: var(--accent);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: color 0.2s ease, padding-left 0.2s ease;
+}
+
+.note-link:hover,
+.note-link:focus-visible {
+  padding-left: 0.35rem;
+  color: var(--accent-strong);
 }
 
 .mini-panel pre {
