@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A practical comparison of Java database connection pools."
+    />
+    <title>Database Connection Pool | SES</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="note-page">
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <header class="topbar">
+      <a class="brand-wrap brand-link" href="index.html#home" aria-label="SES home">
+        <span class="brand-mark">S</span>
+        <span class="brand-text">
+          <span class="brand-name">SES</span>
+          <span class="brand-tag">/ dev workspace</span>
+        </span>
+      </a>
+      <a class="back-link" href="index.html#notes">&lt;- back to notes</a>
+    </header>
+
+    <main class="note-shell">
+      <header class="note-hero panel">
+        <p class="eyebrow">// engineering note</p>
+        <h1>Database Connection Pool</h1>
+        <p class="lead">
+          A practical guide to choosing, sizing, and operating connection pools for Java
+          database applications.
+        </p>
+      </header>
+
+      <article class="note-content panel">
+        <p>
+          A database connection pool keeps a reusable set of database connections so the
+          application does not create a new physical connection for every request.
+        </p>
+        <p>
+          A pool should be selected and tuned together with the database driver, database
+          limits, workload, and application framework. The fastest pool in a benchmark is
+          not automatically the best choice for every system.
+        </p>
+
+        <h2>Quick comparison</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Pool</th><th>Best fit</th><th>Strengths</th><th>Trade-offs</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>HikariCP</strong></td><td>Most modern Java applications</td><td>Very fast, small API, low overhead, strong defaults</td><td>Fewer legacy features</td></tr>
+              <tr><td><strong>Apache Commons DBCP2</strong></td><td>Apache-based and compatibility-focused systems</td><td>Mature, familiar, extensive configuration</td><td>Usually more overhead and more settings</td></tr>
+              <tr><td><strong>c3p0</strong></td><td>Older applications</td><td>Long history, testing, recovery, statement pooling</td><td>Larger footprint; rarely ideal for new services</td></tr>
+              <tr><td><strong>Tomcat JDBC Pool</strong></td><td>Applications already on Tomcat</td><td>Flexible and feature-rich Tomcat integration</td><td>Less compelling outside Tomcat</td></tr>
+              <tr><td><strong>Agroal</strong></td><td>Quarkus and Jakarta applications</td><td>Lightweight and platform integration</td><td>Smaller ecosystem outside its main frameworks</td></tr>
+              <tr><td><strong>Oracle UCP</strong></td><td>Oracle Database applications</td><td>RAC, FAN, and Oracle-specific failover</td><td>Vendor-specific</td></tr>
+              <tr><td><strong>Vibur DBCP</strong></td><td>Diagnostic-focused deployments</td><td>Lightweight and useful leak detection</td><td>Smaller community</td></tr>
+              <tr><td><strong>Vert.x Pool</strong></td><td>Reactive Vert.x applications</td><td>Designed for asynchronous workloads</td><td>Primarily a Vert.x ecosystem choice</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>HikariCP</h2>
+        <p>
+          HikariCP is the usual default for a new Java service using JDBC. It has a small
+          implementation, low allocation overhead, and a focused configuration model.
+        </p>
+        <h3>Why it is a strong default</h3>
+        <ul>
+          <li>Excellent throughput and latency for common JDBC workloads.</li>
+          <li>Small dependency and low runtime overhead.</li>
+          <li>First-class support in Spring Boot and other modern frameworks.</li>
+          <li>Clear lifecycle and timeout settings.</li>
+          <li>Good recovery behavior when the database or network becomes unhealthy.</li>
+        </ul>
+        <pre><code>spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.minimum-idle=10
+spring.datasource.hikari.connection-timeout=30000
+spring.datasource.hikari.validation-timeout=5000
+spring.datasource.hikari.idle-timeout=600000
+spring.datasource.hikari.max-lifetime=1800000</code></pre>
+
+        <h2>Choosing the right pool</h2>
+        <div class="choice-grid">
+          <section><h3>Choose HikariCP</h3><p>For a new Java/JDBC service without a vendor-specific requirement.</p></section>
+          <section><h3>Choose DBCP2</h3><p>When existing Apache Commons configuration or compatibility is important.</p></section>
+          <section><h3>Choose c3p0</h3><p>When the application already depends on c3p0-specific behavior.</p></section>
+          <section><h3>Choose Tomcat JDBC</h3><p>When Tomcat integration, interceptors, or abandoned-connection controls matter.</p></section>
+          <section><h3>Choose Agroal</h3><p>When the application runs on Quarkus or a Jakarta platform where it is native.</p></section>
+          <section><h3>Choose Oracle UCP</h3><p>When Oracle RAC, FAN, failover, or other Oracle-specific features are required.</p></section>
+        </div>
+
+        <h2>Pool sizing</h2>
+        <p>
+          Pool size is a concurrency limit, not a performance score. A larger pool can
+          increase database contention, memory use, lock waits, and request latency.
+        </p>
+        <p>Start conservatively, measure, and keep the total connection budget in mind:</p>
+        <pre><code>sum(pool sizes across application instances)
+  + administrative and background connections
+  &lt;= database connection limit</code></pre>
+        <p>
+          A small service often starts between 5 and 10 connections, followed by load
+          testing. Leave capacity for migrations, monitoring, administration, replicas,
+          and other services.
+        </p>
+
+        <h2>Important settings</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Setting</th><th>Purpose</th><th>Guidance</th></tr></thead>
+            <tbody>
+              <tr><td>Maximum pool size</td><td>Upper bound on concurrent connections</td><td>Size from workload and database capacity</td></tr>
+              <tr><td>Minimum idle</td><td>Connections kept ready</td><td>Avoid excessive idle connections</td></tr>
+              <tr><td>Connection timeout</td><td>Wait time for a connection</td><td>Keep finite and below the request timeout</td></tr>
+              <tr><td>Maximum lifetime</td><td>Recycle age of a connection</td><td>Set below infrastructure or database limits when needed</td></tr>
+              <tr><td>Leak detection</td><td>Reports connections held too long</td><td>Enable temporarily during investigation</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>Operational checklist</h2>
+        <ul>
+          <li>Use the database vendor's supported JDBC driver version.</li>
+          <li>Keep pool acquisition timeouts finite; never wait indefinitely.</li>
+          <li>Monitor pool exhaustion separately from slow SQL.</li>
+          <li>Return connections with try-with-resources or a finally block.</li>
+          <li>Keep transactions short and avoid network calls while holding a connection.</li>
+          <li>Test database restart, network interruption, and pool recovery behavior.</li>
+        </ul>
+
+        <aside class="note-callout">
+          <span class="section-label">/ recommendation</span>
+          <p>
+            For a new Java/JDBC application, start with <strong>HikariCP</strong> unless the
+            framework, database vendor, reactive model, or existing deployment requires
+            another pool.
+          </p>
+        </aside>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <span>// SES engineering notes</span>
+      <a href="index.html#home">return home</a>
+    </footer>
+  </body>
+</html>
